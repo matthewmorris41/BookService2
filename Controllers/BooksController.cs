@@ -112,7 +112,16 @@ namespace BookService2.Controllers
             db.Books.Add(book);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = book.Id }, book);
+            db.Entry(book).Reference(x => x.Author).Load();
+
+            var dto = new BookDTO()
+            {
+                Id = book.Id,
+                Title = book.Title,
+                AuthorName = book.Author.Name
+            };
+
+            return CreatedAtRoute("DefaultApi", new { id = book.Id }, dto);
         }
         ///<summary>
         ///Delete a book.
